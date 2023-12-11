@@ -1,0 +1,605 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+      "title": "Inventory Management API",
+      "description": "API for managing devices inventory",
+      "version": "1.0.0"
+  },
+  "servers": [
+      {
+          "url": "http://localhost:8000",
+          "description": "Local server"
+      }
+  ],
+  "paths": {
+      "/devices": {
+          "get": {
+              "tags": ["Devices"],
+              "summary": "Get all devices",
+              "description": "Obtain a list of all devices",
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Devices"
+                              }
+                          }
+                      }
+                  }
+              }
+          },
+          "post": {
+              "tags": ["Devices"],
+              "summary": "Add new devices",
+              "description": "Add new devices",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/AddDevice"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "201": {
+                      "description": "Created"
+                  },
+                  "400": {
+                      "description": "Bad request"
+                  }
+              }
+          }
+      },
+      "/devices/{id}": {
+          "get": {
+              "tags": ["Devices"],
+              "summary": "Obtain device by ID",
+              "description": "Obtain device by id from the database",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "description": "Device ID",
+                      "schema": {
+                          "type": "integer"
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Device"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not found"
+                  }
+              }
+          },
+          "put": {
+              "tags": ["Devices"],
+              "summary": "Update device by ID",
+              "description": "Update device by ID in database",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "description": "Device ID",
+                      "schema": {
+                          "type": "integer"
+                      }
+                  }
+              ],
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/AddDevice"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Device"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Device not found"
+                  },
+                  "400": {
+                      "description": "Bad request JSON"
+                  }
+              }
+          },
+          "delete": {
+              "tags": ["Devices"],
+              "summary": "Delete device by ID",
+              "description": "Delete device by ID in database",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "description": "Device ID",
+                      "schema": {
+                          "type": "integer"
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "OK"
+                  },
+                  "404": {
+                      "description": "Not found"
+                  }
+              }
+          }
+      },
+      "/devices/{id}/image": {
+          "post": {
+              "tags": ["Devices"],
+              "summary": "Upload device image",
+              "description": "Upload an image for a device(id)",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "description": "Device ID",
+                      "required": true,
+                      "schema": {
+                          "type": "integer"
+                      }
+                  }
+              ],
+              "requestBody": {
+                  "content": {
+                      "multipart/form-data": {
+                          "schema": {
+                              "type": "object",
+                              "properties": {
+                                  "image": {
+                                      "type": "string",
+                                      "format": "binary"
+                                  }
+                              }
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "200": {
+                      "description": "Successfully"
+                  },
+                  "400": {
+                      "description": "Bad request"
+                  },
+                  "404": {
+                      "description": "Not found"
+                  }
+              }
+          },
+          "get": {
+              "tags": ["Devices"],
+              "summary": "Obtain device image",
+              "description": "Obtain the image of a specific device",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "description": "Device ID",
+                      "required": true,
+                      "schema": {
+                          "type": "integer"
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Image found",
+                      "content": {
+                          "image/png": {
+                              "schema": {
+                                  "type": "string",
+                                  "format": "binary"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Image not found"
+                  }
+              }
+          }
+      },
+      "/devices/{id}/assign": {
+          "put": {
+              "tags": ["Devices"],
+              "summary": "Assign device to user",
+              "description": "Assign a device to user by ID",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "description": "Device ID",
+                      "schema": {
+                          "type": "integer"
+                      }
+                  }
+              ],
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/AssignDevice"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Device"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad request"
+                  },
+                  "404": {
+                      "description": "Not found"
+                  }
+              }
+          }
+      },
+      "/devices/{id}/unassign": {
+          "put": {
+              "tags": ["Devices"],
+              "summary": "Unassign device from a user",
+              "description": "Unassign a device from a user by ID",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "description": "Device ID",
+                      "schema": {
+                          "type": "integer"
+                      }
+                  }
+              ],
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/Device"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Device"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad request"
+                  },
+                  "404": {
+                      "description": "Not found"
+                  }
+              }
+          }
+      },
+      "/users": {
+          "get": {
+              "tags": ["Users"],
+              "summary": "Get all users",
+              "description": "Get all users from database",
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Users"
+                              }
+                          }
+                      }
+                  }
+              }
+          },
+          "post": {
+              "tags": ["Users"],
+              "summary": "Register a new user",
+              "description": "Create a new user",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/User"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "201": {
+                      "description": "Created"
+                  },
+                  "400": {
+                      "description": "Bad request"
+                  },
+                  "409": {
+                      "description": "User already exists"
+                  }
+              }
+          }
+      },
+      "/users/{username}": {
+          "get": {
+              "tags": ["Users"],
+              "summary": "Obtain user by username",
+              "description": "Obtain user by username from database",
+              "parameters": [
+                  {
+                      "name": "username",
+                      "in": "path",
+                      "description": "Username of the user",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/User"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not found"
+                  }
+              }
+          },
+          "put": {
+              "tags": ["Users"],
+              "summary": "Update User by Username",
+              "description": "Update user details by username",
+              "parameters": [
+                  {
+                      "name": "username",
+                      "in": "path",
+                      "description": "Username of the user",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              ],
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/User"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/User"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not found"
+                  },
+                  "400": {
+                      "description": "Bad request"
+                  }
+              }
+          },
+          "delete": {
+              "tags": ["Users"],
+              "summary": "Delete User by username",
+              "description": "Delete user by username from the database",
+              "parameters": [
+                  {
+                      "name": "username",
+                      "in": "path",
+                      "description": "Username of the user",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "OK"
+                  },
+                  "404": {
+                      "description": "Not found"
+                  }
+              }
+          }
+      },
+      "/users/{username}/devices": {
+          "get": {
+              "summary": "Obtain devices assigned to a user",
+              "description": "Obtain devices assigned to a user(id)",
+              "parameters": [
+                  {
+                      "name": "username",
+                      "in": "path",
+                      "required": true,
+                      "description": "Username",
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Devices"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "User not found or no devices assigned"
+                  }
+              }
+          }
+      }
+  },
+  "components": {
+      "schemas": {
+          "Device": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "type": "integer",
+                      "description": "The unique identifier for the device."
+                  },
+                  "name": {
+                      "type": "string",
+                      "description": "The name of the device."
+                  },
+                  "desc": {
+                      "type": "string",
+                      "description": "The description of the device."
+                  },
+                  "serial_number": {
+                      "type": "string",
+                      "description": "The serial number of the device."
+                  },
+                  "manufacturer": {
+                      "type": "string",
+                      "description": "The manufacturer of the device."
+                  },
+                  "assigned_to": {
+                      "type": "string",
+                      "description": "The user to whom the device is assigned."
+                  },
+                  "image_path": {
+                      "type": "string",
+                      "description": "The file path of the device's image."
+                  }
+              }
+          },
+          "AddDevice": {
+              "type": "object",
+              "properties": {
+                  "name": {
+                      "type": "string",
+                      "description": "The name of the device."
+                  },
+                  "desc": {
+                      "type": "string",
+                      "description": "The description of the device."
+                  },
+                  "serial_number": {
+                      "type": "string",
+                      "description": "The serial number of the device."
+                  },
+                  "manufacturer": {
+                      "type": "string",
+                      "description": "The manufacturer of the device."
+                  }
+              }
+          },
+          "Devices": {
+              "type": "array",
+              "items": {
+                  "$ref": "#/components/schemas/Device"
+              }
+          },
+          "AssignDevice": {
+              "type": "object",
+              "properties": {
+                  "username": {
+                      "type": "string",
+                      "description": "The username of the user to whom the device will be assigned."
+                  }
+              }
+          },
+          "User": {
+              "type": "object",
+              "properties": {
+                  "username": {
+                      "type": "string",
+                      "description": "The username of the user."
+                  },
+                  "name": {
+                      "type": "string",
+                      "description": "The name of the user."
+                  },
+                  "surname": {
+                      "type":"string",
+                                          "description": "The surname of the user."
+                                      },
+                                      "email": {
+                                          "type": "string",
+                                          "description": "The email of the user."
+                                      },
+                                      "phone": {
+                                          "type": "string",
+                                          "description": "The phone number of the user."
+                                      }
+                                  }
+                              },
+                              "Users": {
+                                  "type": "array",
+                                  "items": {
+                                      "$ref": "#/components/schemas/User"
+                                  }
+                              }
+                          }
+                      }
+                  }
+                  
+                
